@@ -53,7 +53,7 @@ import { ref } from 'vue';
             secondNumb.value += number;
             message.value = secondNumb.value;
           } else {
-            firstNumb.value += number.value;
+            firstNumb.value += number;
             message.value = firstNumb.value;
           }
         };
@@ -115,9 +115,9 @@ function addAction (operator) {
           }
         };
 function addHistory (item) {
-          history.push(item)
-          if (history.length > 11) {
-            history.shift();
+          history.value.push(item)
+          if (history.value.length > 11) {
+            history.value.shift();
           }
         };
 function calculate () {
