@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>individual project</title>
+  <script src="https://unpkg.com/vue@2"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.3/dist/full.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-screen flex items-center justify-center bg-primary-content">
+  <div id="app">
+    <div class="w-full grid-cols-2 grid gap-1">
+      <div class="">
+        <input type="text" disabled="disabled" v-model="message" class="input input-bordered w-full" />
+        <div class="keyboard w-full grid-cols-4 grid gap-1 mt-1">
+          <button class="btn btn-accent w-20" @click="addAction('/')">/</button>
+          <button class="btn btn-accent w-20" @click="addAction('*')">*</button>
+          <button class="btn btn-accent w-20" @click="addAction('+')">+</button>
+          <button class="btn btn-accent w-20" @click="addAction('-')">-</button>
+
+          <button class="btn btn-accent w-20" @click="addNumber('1')">1</button>
+          <button class="btn btn-accent w-20" @click="addNumber('2')">2</button>
+          <button class="btn btn-accent w-20" @click="addNumber('3')">3</button>
+          <button class="btn btn-accent w-20" @click="calculate">=</button>
+
+          <button class="btn btn-accent w-20" @click="addNumber('4')">4</button>
+          <button class="btn btn-accent w-20" @click="addNumber('5')">5</button>
+          <button class="btn btn-accent w-20" @click="addNumber('6')">6</button>
+          <button class="btn btn-neutral w-20" @click="remove()">ac</button>
+
+          <button class="btn btn-accent w-20" @click="addNumber('7')">7</button>
+          <button class="btn btn-accent w-20" @click="addNumber('8')">8</button>
+          <button class="btn btn-accent w-20" @click="addNumber('9')">9</button>
+          <button class="btn btn-accent w-20" @click="addNumber('0')">0</button>
+
+          <button class="btn btn-accent w-20" @click="addPi()">π</button>
+          <button class="btn btn-accent w-20" @click="addSqrt()">√</button>
+          <button class="btn btn-accent w-20" @click="addAction('^')">^</button>
+          <button class="btn btn-accent w-20" @click="calculateFactorial()">!</button>
+        </div>
+      </div>
+      <div class="w-80">
+        <div v-for="item in history"
+          class="grid w-full h-7 border-zinc-950 border rounded bg-success text-accent-content place-content-left px-2">
+          {{ item.length > 35 ? item.slice(0, 35) + '...' : item }}</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello friend!',
+        firstNumb: "",
+        secondNumb: "",
+        action: "",
+        piValue: "3.14159",
+        history: []
+      },
+      methods: {
+        addNumber: function (number) {
+          if (this.action !== "") {
+            this.secondNumb += number;
+            this.message = this.secondNumb;
+          } else {
+            this.firstNumb += number;
+            this.message = this.firstNumb;
+          }
+        },
+        addSqrt: function () {
+          if (this.firstNumb !== "") {
+            const num = parseFloat(this.firstNumb);
+            if (num < 0) {
+              this.message = "нельзя вычислять корень из отрицательного числа";
+            } else {
+              this.message = Math.sqrt(num).toString();
+              this.addHistory(`√ ${this.firstNumb} = ${this.message}`);
+              this.firstNumb = this.message;
+            }
+          }
+        },
+        calculateFactorial: function () {
+          let num = parseInt(this.firstNumb);
+          let result = 1;
+          if (num < 0) {
+            this.message = "факториал используют только для положительных чисел";
+          } else {
+            for (let i = 2; i <= num; i++) {
+              result *= i;
+            }
+            this.message = result.toString();
+            this.addHistory(`${this.firstNumb}! = ${this.message}`);
+            this.firstNumb = this.message;
+          }
+        },
+        addPi: function () {
+          if (this.action !== "") {
+            this.secondNumb += this.piValue;
+            this.message = this.secondNumb;
+          } else {
+            this.firstNumb += this.piValue;
+            this.message = this.firstNumb;
+          }
+        },
+        remove: function () {
+          this.firstNumb = "";
+          this.secondNumb = "";
+          this.action = "";
+          this.message = '0';
+        },
+        addAction: function (operator) {
+          if (this.firstNumb === "") {
+            return;
+          }
+          if (this.action === "") {
+            this.action = operator;
+            this.message += operator;
+          } else {
+            this.calculate();
+            this.action = operator;
+            this.firstNumb = this.message;
+            this.secondNumb = "";
+            this.message += operator;
+          }
+        },
+        addHistory: function (item) {
+          this.history.push(item)
+          if (this.history.length > 11) {
+            this.history.shift();
+          }
+        },
+calculate: function () {
+  if (this.firstNumb === "" || this.secondNumb === "") {
+    return;
+  }
+  const first = parseFloat(this.firstNumb);
+  const second = parseFloat(this.secondNumb);
+  let result;
+  switch (this.action) {
+    case '+':
+      result = first + second;
+      break;
+    case '-':
+      result = first - second;
+      break;
+    case '*':
+      result = first * second;
+      break;
+    case '^':
+      result = first ** second;
+      break;
+    case '/':
+      if (second === 0) {
+        this.message = "ошибка деления на 0";
+        return;
+      } else {
+        result = first / second;
+      }
+      break;
+  }
+  this.message = result.toString();
+  this.addHistory(`${this.firstNumb} ${this.action} ${this.secondNumb} = ${this.message}`);
+  this.firstNumb = this.message;
+  this.secondNumb = "";
+  this.action = "";
+},
+      }
+    });
+  </script>
+</body>
+</html>
