@@ -49,7 +49,7 @@
     var app = new Vue({
       el: '#app',
       data: {
-        message: 'Hello friend!',
+        message: 'приветик!',
         firstNumb: "",
         secondNumb: "",
         action: "",
@@ -70,7 +70,7 @@
           if (this.firstNumb !== "") {
             const num = parseFloat(this.firstNumb);
             if (num < 0) {
-              this.message = "нельзя вычислять корень из отрицательного числа";
+              this.message = "не получится с отр. числом";
             } else {
               this.message = Math.sqrt(num).toString();
               this.addHistory(`√ ${this.firstNumb} = ${this.message}`);
